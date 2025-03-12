@@ -1,62 +1,8 @@
-// เลือกช่องแสดงผล (Display)
-const calculatorDisplay = document.querySelector(".calculator-display h1");
-
-// เลือกปุ่มทั้งหมดในรูปแบบ NodeList
-const inputBtns = document.querySelectorAll("button");
-
-// เลือกปุ่ม Clear แยกต่างหากโดยใช้ ID
-const clearBtn = document.getElementById("clear-btn");
-
-let firstValue = 0;
-let awaitingNextValue = false;
-let operatorValue = "";
-
-function addNumberValue(number) {
-  if (awaitingNextValue) {
-    calculatorDisplay.textContent = number;
-    awaitingNextValue = false;
-  } else {
-    const displayValue = calculatorDisplay.textContent;
-    calculatorDisplay.textContent =
-      displayValue === "0" ? number : displayValue + number;
-  }
-}
-
-const calculate = {
-  "/": (firstNumber, secondNumber) => firstNumber / secondNumber,
-  "*": (firstNumber, secondNumber) => firstNumber * secondNumber,
-  "+": (firstNumber, secondNumber) => firstNumber + secondNumber,
-  "-": (firstNumber, secondNumber) => firstNumber - secondNumber,
-  "=": (firstNumber, secondNumber) => secondNumber,
-};
-
-function useOperator(operator) {
-  const currentValue = Number(calculatorDisplay.textContent); // แปลง string > number เพื่อใช้ operator
-
-  if (operatorValue && awaitingNextValue) {
-    operatorValue = operator;
-    return;
-  }
-
-  if (!firstValue) {
-    firstValue = currentValue;
-  } else {
-    const calculation = calculate[operatorValue](firstValue, currentValue);
-    calculatorDisplay.textContent = calculation;
-    firstValue = calculation;
-  }
-  awaitingNextValue = true;
-  operatorValue = operator;
-}
-
-function addDecimal() {
-  if (awaitingNextValue) {
-    return;
-  }
-  if (!calculatorDisplay.textContent.includes(".")) {
-    calculatorDisplay.textContent = `${calculatorDisplay.textContent}.`;
-  }
-}
+import { inputBtns, clearBtn } from "./src/selector.js";
+import addDecimal from "./src/addDecimal.js";
+import addNumberValue from "./src/addNumberValue.js";
+import useOperator from "./src/useOperator.js";
+import { resetAll } from "./src/value.js";
 
 inputBtns.forEach((inputBtn) => {
   if (inputBtn.classList.length === 0) {
@@ -69,12 +15,5 @@ inputBtns.forEach((inputBtn) => {
     inputBtn.addEventListener("click", () => addDecimal());
   }
 });
-
-function resetAll() {
-  firstValue = 0;
-  operatorValue = "";
-  awaitingNextValue = false;
-  calculatorDisplay.textContent = "0";
-}
 
 clearBtn.addEventListener("click", resetAll);
